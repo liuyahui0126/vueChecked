@@ -141,6 +141,7 @@
 
             },
             methods: {
+
                 isCheck: function () {
                     this.checked = !this.checked;
                     if (this.checked == false) {
@@ -175,13 +176,15 @@
                 },
                 minus:function(index){
                     if(this.num[index] > 0){
-                       this.num[index] = --this.num[index];
-                       console.log(this.num[index]);
+                        var arr = this.num.concat();
+                        arr[index] = --arr[index];
+                        this.num = arr;
                     }
                 },
                 plus : function(index){
-                    this.num[index] = ++this.num[index];
-                    console.log(this.num[index]);
+                    var arr = this.num.concat();
+                    arr[index] = ++arr[index];
+                    this.num = arr;
                 }
             },
             computed:{
