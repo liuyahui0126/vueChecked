@@ -60,9 +60,9 @@
                 <input type="checkbox" name="show" id="show" :checked='checked' @click='isCheck'>
             </div>
             <div class="bottom" :style='style'>
-                床(100,0)<input type="checkbox" :checked='bedchecked' @click='bedchec'>
-                沙发(200,0)<input type="checkbox" :checked='sofachecked' @click='sofachec'> 
-                wifi(200,0)<input type="checkbox" :checked='wifichecked' @click='wifichec'>
+                <span  v-for='(obj,index) in furniture'>
+                    {{obj.name}}({{obj.fee}})<input type="checkbox" :value="obj" v-model='furList'>
+                </span>
             </div>
         </div>
         <div id='foot'>
@@ -75,50 +75,20 @@
                         <td>天数</td>
                         <td>总价</td>
                     </tr>
-                    <tr>
-                        <td colspan="2">群力花园豪华型</td>
-                        <td>￥400元</td>
+                    <tr v-for='(val,index) in furList'>
+                        <td colspan="2">{{val.name}}</td>
+                        <td>￥{{val.fee}}元</td>
                         <td>
-                            <button @click='minus(0)'>-</button>
-                            <input type="text" v-model='num[0]'>
-                            <button  @click='plus(0)'>+</button>
+                            <button @click='minus(index)'>-</button>
+                            <input type="text" v-model='num[index]'>
+                            <button  @click='plus(index)'>+</button>
                         </td>
-                        <td>￥{{house}}元</td>
-                    </tr>
-                    <tr class='bed' :style='{display:bedis}'>
-                        <td colspan="2">床</td>
-                        <td>￥100元</td>
-                        <td>
-                                <button @click='minus(1)'>-</button>
-                                <input type="text" v-model='num[1]'>
-                                <button  @click='plus(1)'>+</button>
-                        </td>
-                        <td>￥{{bed}}元</td>
-                    </tr>
-                    <tr class='sofa' :style='{display:sofadis}'>
-                        <td colspan="2">沙发</td>
-                        <td>￥200元</td>
-                        <td>
-                                <button @click='minus(2)'>-</button>
-                                <input type="text" v-model='num[2]'>
-                                <button  @click='plus(2)'>+</button>
-                        </td>
-                        <td>￥{{sofa}}元</td>
-                    </tr>
-                    <tr class="wifi" :style='{display:wifidis}'>
-                        <td colspan="2">wifi</td>
-                        <td>￥300元</td>
-                        <td>
-                                <button @click='minus(3)'>-</button>
-                                <input type="text" v-model='num[3]'>
-                                <button  @click='plus(3)'>+</button>
-                        </td>
-                        <td>￥{{wifi}}元</td>
+                        <td>￥{{money(index)}}元</td>
                     </tr>
                 </table>
             </div>
             <div class="charge">
-                <span>订单总金额：￥{{money}}元</span>
+                <span>订单总金额：￥{{totalFee}}元</span>
             </div>
         </div>
     </div>
@@ -127,51 +97,22 @@
         var vm = new Vue({
             el: '#app',
             data: {
+                furniture: [{name : '床', fee : 100},{name : '沙发', fee : 200},{name : 'wifi', fee : 300}],
+                furList:[{name:'群力花园豪华型',fee:400}],
                 checked: false,
-                bedchecked:false,
-                sofachecked:false,
-                wifichecked:false,
                 num :[2,0,0,0],
                 style: {
                     display: 'none',
                 },
-                bedis:'none',
-                sofadis:'none',
-                wifidis:'none'
-
+                fee:0
             },
             methods: {
-
                 isCheck: function () {
                     this.checked = !this.checked;
                     if (this.checked == false) {
                         this.style.display = 'none';
                     } else {
                         this.style.display = 'block';
-                    }
-                },
-                bedchec: function () {
-                    this.bedchecked = !this.bedchecked;
-                    if (this.bedchecked == false) {
-                        this.bedis = 'none';
-                    } else {
-                        this.bedis = 'table-row';
-                    }
-                },
-                sofachec: function () {
-                    this.sofachecked = !this.sofachecked;
-                    if (this.sofachecked == false) {
-                        this.sofadis = 'none';
-                    } else {
-                        this.sofadis = 'table-row';
-                    }
-                },
-                wifichec: function () {
-                    this.wifichecked = !this.wifichecked;
-                    if (this.wifichecked == false) {
-                        this.wifidis = 'none';
-                    } else {
-                        this.wifidis = 'table-row';
                     }
                 },
                 minus:function(index){
@@ -185,23 +126,18 @@
                     var arr = this.num.concat();
                     arr[index] = ++arr[index];
                     this.num = arr;
+                },
+                money : function(index){
+                    return this.fee = this.furList[index].fee * this.num[index];
                 }
             },
             computed:{
-                money : function(){
-                    return this.num[0]*400 + this.num[1]*100 + this.num[2]*200 +this.num[3]*300;
-                },
-                house : function(){
-                    return this.num[0] * 400;
-                },
-                bed : function(){
-                    return this.num[1] * 100;
-                }, 
-                sofa : function(){
-                    return this.num[2] * 200;
-                }, 
-                wifi : function(){
-                    return this.num[3] * 300;
+                totalFee : function(){
+                    var money = 0;
+                    for(var i = 0;i< this.furList.length;i++){
+                        money += this.furList[i].fee * this.num[i]
+                    }
+                    return money;
                 }
             }
         })
